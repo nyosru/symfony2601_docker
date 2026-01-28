@@ -1,0 +1,81 @@
+
+networks:
+  sym_web:
+    name: sym_web
+#  laravel:
+#    name: laravel
+#    external: true
+
+volumes:
+  caddy_caddyfile:
+#  portainer_data:
+
+services:
+
+
+  caddy1:
+    container_name: caddy1
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"     # на всякий случай, если потом захочешь HTTPS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_caddyfile:/etc/caddy
+      - '${FOLDER_SYMFONY2601}:${FOLDER_SYMFONY2601_SERV}'
+    depends_on:
+      - symfony2601
+    networks:
+      - sym_web
+
+  symfony2601:
+    container_name: symfony2601
+#    depends_on:
+#      - mysql_db_master
+#    links:
+#      - mysql_db_master:db_mysql
+    networks:
+      - sym_web
+    expose:
+      - 9000
+    build:
+      context: .
+      dockerfile: Symfony2601.Dockerfile
+    working_dir: ${FOLDER_SYMFONY2601_SERV}
+    environment:
+      - PHPGROUP=www-data
+      - PHPUSER=www-data
+      - FOLDER=${FOLDER_SYMFONY2601_SERV}
+    restart: unless-stopped
+    volumes:
+      - '${FOLDER_SYMFONY2601}:${FOLDER_SYMFONY2601_SERV}'
+
+#  swagger-ui:
+#    image: swaggerapi/swagger-ui
+#    container_name: swagger_ui
+#    ports:
+#      - "8082:8080"
+#    environment:
+#      SWAGGER_JSON: /swagger.json
+#    volumes:
+#      - ./swagger.json:/swagger.json
+
+#  symfony_cli:
+#    container_name: sycli
+##    depends_on:
+##      - mysql_db_master
+##    links:
+##      - mysql_db_master:db_mysql
+#    networks:
+#      - sym_web
+#    build:
+#      context: .
+#      dockerfile: sy-cli.Dockerfile
+#    working_dir: ${FOLDER_SYMFONYCLI_SERV}
+#    environment:
+#      - PHPGROUP=www-data
+#      - PHPUSER=www-data
+#      - FOLDER=${FOLDER_SYMFONYCLI_SERV}
+#    restart: unless-stopped
+#    volumes:
+#      - '${FOLDER_SYMFONYCLI}:${FOLDER_SYMFONYCLI_SERV}'
