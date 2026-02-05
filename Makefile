@@ -1,4 +1,24 @@
 
+
+prod:
+#	git fetch origin
+#	git reset --hard origin/main
+	#@echo "+++0 удалить сеть laravel"
+	#make remove-laravel-network
+	@echo "+++ prod environment started"
+	make create_web_laravel
+	@echo "+++2 prod environment started"
+#	cp caddy/prod.Caddyfile caddy/Caddyfile
+	cp docker-compose.prod.yml docker-compose.yml
+	#docker-compose down --rmi all -v
+	docker-compose up -d --build
+	#make caddy_refresh_cfd_prod
+	#docker system prune --force
+
+
+
+
+
 dev:
 	@echo "Development environment started"
 	make create_web_laravel
@@ -55,25 +75,6 @@ prod_deploy:
 	docker-compose up -d --build
 	#make caddy_refresh_cfd_prod
 	#docker system prune --force
-
-
-prod:
-	git fetch origin
-	git reset --hard origin/main
-	#@echo "+++0 удалить сеть laravel"
-	#make remove-laravel-network
-	@echo "+++ prod environment started"
-	make create_web_laravel
-	@echo "+++2 prod environment started"
-#	cp caddy/prod.Caddyfile caddy/Caddyfile
-	cp docker-compose.prod.yml docker-compose.yml
-	docker-compose down --rmi all -v
-	docker-compose up -d --build
-	make caddy_refresh_cfd_prod
-	#docker system prune --force
-
-
-
 
 
 
